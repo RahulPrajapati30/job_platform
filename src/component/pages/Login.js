@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useTheme } from "../context/ThemeContext";
-import { MdWbSunny } from "react-icons/md";
-import { LuMoon } from "react-icons/lu";
 import Navbar from "../constant/Navbar";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../redux/authReducer";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const {
@@ -15,8 +15,21 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [show, setShow] = useState(false);
-  const { darkMode, toggleTheme } = useTheme();
+
+  // redux se auth state lete hain
+  const { currentUser } = useSelector((state) => state.auth);
+
+  // jab user authenticated ho jaye to redirect kar do
+  useEffect(() => {
+    if (currentUser) {
+      toast.success("Login successfully !!!");
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
 
   const onSubmit = (data) => {
     if (!data.email || !data.password) {
@@ -24,8 +37,16 @@ const Login = () => {
       return;
     }
 
-    console.log("Login Data:", data);
-    toast.success("Login successfully !!!");
+    // redux dispatch
+    dispatch(loginUser(data));
+
+    // check login success/fail
+    setTimeout(() => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (!user) {
+        toast.error("Invalid email or password");
+      }
+    }, 200);
   };
 
   return (
@@ -33,16 +54,6 @@ const Login = () => {
       <Navbar />
       <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
         <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          {/* Dark Mode Toggle Button */}
-          {/* <div className="flex justify-end">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-xl"
-            >
-              {darkMode ? <MdWbSunny /> : <LuMoon />}
-            </button>
-          </div> */}
-
           <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
             Login
           </h2>
@@ -99,15 +110,14 @@ const Login = () => {
                 </p>
               )}
             </div>
-
-            {/* Submit Button */}
+{/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition"
             >
               Login
             </button>
-</form>
+          </form>
 
           {/* Register link */}
           <p className="text-center text-gray-600 dark:text-gray-400 text-sm mt-4">

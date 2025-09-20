@@ -4,10 +4,19 @@ import { useTheme } from "../context/ThemeContext";
 import { MdWbSunny } from "react-icons/md";
 import { LuMoon } from "react-icons/lu";
 import { HiMenu, HiX } from "react-icons/hi";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutUser } from "../redux/authReducer";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { darkMode, toggleTheme } = useTheme();
+
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-md">
@@ -32,18 +41,30 @@ const Navbar = () => {
             >
               About
             </Link>
-            <Link
-              to="/login"
-              className="text-gray-800 dark:text-gray-200 hover:text-blue-500"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="text-gray-800 dark:text-gray-200 hover:text-blue-500"
-            >
-              Register
-            </Link>
+
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-800 dark:text-gray-200 hover:text-blue-500"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-gray-800 dark:text-gray-200 hover:text-blue-500"
+                >
+                  Register
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="text-gray-800 dark:text-gray-200 hover:text-blue-500"
+              >
+                Logout
+              </button>
+            )}
 
             {/* Dark Mode Toggle */}
             <button
@@ -65,6 +86,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden px-4 pb-3 space-y-2 bg-gray-50 dark:bg-gray-700">
@@ -80,18 +102,31 @@ const Navbar = () => {
           >
             About
           </Link>
-          <Link
-            to="/login"
-            className="block text-gray-800 dark:text-gray-200 hover:text-blue-500"
-          >
-            Login
-          </Link>
-          <Link
-            to="/register"
-            className="block text-gray-800 dark:text-gray-200 hover:text-blue-500"
-          >
-            Register
-          </Link>
+
+          {!isAuthenticated ? (
+            <>
+              <Link
+                to="/login"
+                className="block text-gray-800 dark:text-gray-200 hover:text-blue-500"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="block text-gray-800 dark:text-gray-200 hover:text-blue-500"
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="block text-gray-800 dark:text-gray-200 hover:text-blue-500"
+            >
+              Logout
+            </button>
+          )}
+
           <button
             onClick={toggleTheme}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 text-xl mt-2"
@@ -101,6 +136,8 @@ const Navbar = () => {
         </div>
       )}
     </nav>
+
   );
 };
+
 export default Navbar;

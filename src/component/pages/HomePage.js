@@ -2,6 +2,7 @@ import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import Navbar from "../constant/Navbar";
+import Job from "../constant/Job";
 
 const HomePage = () => {
   return (
@@ -66,7 +67,7 @@ const HomePage = () => {
         <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
           <span className="text-purple-600">Latest & Top</span> Job Openings
         </h2>
-        <p className="text-gray-600 dark:text-gray-300">No Job Available</p>
+        <Job boardToken="airbnb" />
       </div>
     </div>
     </div>
